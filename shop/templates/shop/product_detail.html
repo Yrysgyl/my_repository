@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block content %}
+  
+    <h1>{{ product.name }}</h1>
+
+    {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% endif %}
+
+    <p>{{ product.description }}</p>
+    <p>Price: {{ product.price }}</p>
+    <p>Category: {{ product.category.name }}</p>
+    <p>Available: {{ product.available }}</p>
+    <p>Stock: {{ product.stock }}</p>
+    <p>Owner: {{ product.owner.username }}</p>
+    <p>Created: {{ product.created }}</p>
+    <p>Updated: {{ product.updated }}</p>       
+    
+    {% if product.owner == user %}
+        <a href="{% url 'shop:delete_product' slug=product.slug %}">
+            <button>Delete</button>
+        </a>
+        <a href="{% url 'shop:update_product' slug=product.slug %}">
+            <button>Update</button>
+        </a>
+    {% endif %}
+    {% if user.is_authenticated %} 
+        <h2>Comments</h2>
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    <p>{{ comment.text }}</p>
+                    <p><strong>Author:</strong>{{ comment.author.username }}</p>
+                    <small>Date: {{ comment.created_at }}</small>
+                    {% if comment.author == user %}
+                        <a href="{% url 'shop:update_comment' comment.id %}"><button>Update comment</button></a>
+                        <a href="{% url 'shop:delete_comment' comment.id %}"><button>Delete comment</button></a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add comment</button>
+        </form>
+
+    {% endif %} 
+
+   
+
+{% endblock %}
